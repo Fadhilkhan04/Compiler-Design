@@ -1,5 +1,8 @@
 def str_length(s):
-    return len(s)
+    count = 0
+    for _ in s:
+        count += 1
+    return count
 
 def str_concat(s1, s2):
     return s1 + s2
@@ -8,25 +11,57 @@ def str_reverse(s):
     return s[::-1]
 
 def str_search(s, sub):
-    return s.find(sub)
+    for i in range(str_length(s) - str_length(sub) + 1):
+        if s[i:i + str_length(sub)] == sub:
+            return i
+    return -1
 
 def count_char(s, c):
-    return s.count(c)
+    count = 0
+    for ch in s:
+        if ch == c:
+            count += 1
+    return count
 
 def to_upper(s):
-    return s.upper()
+    result = ""
+    for c in s:
+        if 'a' <= c <= 'z':
+            result += chr(ord(c) - 32)
+        else:
+            result += c
+    return result
 
 def to_lower(s):
-    return s.lower()
+    result = ""
+    for c in s:
+        if 'A' <= c <= 'Z':
+            result += chr(ord(c) + 32)
+        else:
+            result += c
+    return result
 
 def is_palindrome(s):
-    return s == s[::-1]
+    return s == str_reverse(s)
 
 def remove_spaces(s):
-    return s.replace(" ", "")
+    result = ""
+    for c in s:
+        if c != ' ':
+            result += c
+    return result
 
 def replace_substring(s, sub, rep):
-    return s.replace(sub, rep)
+    result = ""
+    i = 0
+    while i < str_length(s):
+        if s[i:i + str_length(sub)] == sub:
+            result += rep
+            i += str_length(sub)
+        else:
+            result += s[i]
+            i += 1
+    return result
 
 def main():
     str1 = input("Enter first string: ").strip()
