@@ -4,13 +4,13 @@ class Node:
 
 class CodeGen:
     def __init__(self):
-        self.reg = 1
+        self.reg = 0
         self.code = []
         self.ops = {'+': 'ADD', '-': 'SUB', '*': 'MUL', '/': 'DIV'}
 
     def new_reg(self):
         self.reg += 1
-        return f"R{self.reg - 1}"
+        return f"R{self.reg}"
 
     def gen(self, node):
         if not node.left and not node.right:
