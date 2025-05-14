@@ -8,28 +8,23 @@ def tokenize(expr):
 
 def parse_expr(tokens):
     def parse_factor():
-        token = tokens.pop(0)
-        if token == '(':
-            node = parse_expr(tokens)  # Pass tokens here
-            tokens.pop(0)  # remove ')'
+        if tokens[0] == '(':
+            tokens.pop(0)  # Remove '('
+            node = parse_expr(tokens)
+            tokens.pop(0)  # Remove ')'
             return node
-        else:
-            return {'type': 'number', 'value': token}
+        return {'type': 'number', 'value': tokens.pop(0)}
 
-    def parse_term():
-        node = parse_factor()
-        while tokens and tokens[0] in ('*', '/'):
+    def parse_binop(subparser, ops):
+        node = subparser()
+        while tokens and tokens[0] in ops:
             op = tokens.pop(0)
-            right = parse_factor()
+            right = subparser()
             node = {'type': 'binop', 'op': op, 'left': node, 'right': right}
         return node
 
-    node = parse_term()
-    while tokens and tokens[0] in ('+', '-'):
-        op = tokens.pop(0)
-        right = parse_term()
-        node = {'type': 'binop', 'op': op, 'left': node, 'right': right}
-    return node
+    return parse_binop(lambda: parse_binop(parse_factor, ('*', '/')), ('+', '-'))
+
 
 def print_ast(node, indent=0):
     space = '  ' * indent
