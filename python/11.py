@@ -1,45 +1,40 @@
-
-import re
-
-def tokenize(expr):
-    token_pattern = r'\d+|[-+*/()]'
-
-    return re.findall(token_pattern, expr)
-
-def parse_expr(tokens):
-    def parse_factor():
-        if tokens[0] == '(':
-            tokens.pop(0)  # Remove '('
-            node = parse_expr(tokens)
-            tokens.pop(0)  # Remove ')'
-            return node
-        return {'type': 'number', 'value': tokens.pop(0)}
-
-    def parse_binop(subparser, ops):
-        node = subparser()
-        while tokens and tokens[0] in ops:
-            op = tokens.pop(0)
-            right = subparser()
-            node = {'type': 'binop', 'op': op, 'left': node, 'right': right}
-        return node
-
-    return parse_binop(lambda: parse_binop(parse_factor, ('*', '/')), ('+', '-'))
+class Node:
+  def __init__(self,val,left=None,right=None):
+    self.val = val
+    self.left = left
+    self.right = right
 
 
-def print_ast(node, indent=0):
-    space = '  ' * indent
-    if node['type'] == 'number':
-        print(space + "Number:", node['value'])
-    elif node['type'] == 'binop':
-        print(space + "Operator:", node['op'])
-        print(space + "Left:")
-        print_ast(node['left'], indent + 1)
-        print(space + "Right:")
-        print_ast(node['right'], indent + 1)
+root = Node('=',Node('a'),Node('*',Node('3'),Node('+',Node('5'),Node('3'))))
 
-# Example usage
-expr = "3 + 4 * (5 - 4)"
-tokens = tokenize(expr)
-ast = parse_expr(tokens)
-print("Abstract Syntax Tree:")
-print_ast(ast)
+
+def print_ast(node,level=0):
+  if node:
+    print(" "*level + node.val)
+    print_ast(node.left,level+1)
+    print_ast(node.right,level+1)
+
+
+count = 0 
+
+def generateTAC(node):
+  global count
+
+  if not node.left and not node.right:
+    return node.val
+  
+  left = generateTAC(node.left)
+  right = generateTAC(node.right)
+
+  temp = f't{count}'
+  print(f'{temp}:{left} {node.val} {right}')
+  count += 1
+  return temp
+
+
+
+print("\nAST")
+print_ast(root)
+
+print("\nTAC")
+generateTAC(root)
